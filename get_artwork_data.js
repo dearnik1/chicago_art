@@ -1,12 +1,21 @@
-document.getElementById('fetch-button').onclick = () => {
+function fetchArtwork(artworkId, attempts = 0) {
+    const maxAttempts = 10; // Set a limit on attempts
     // endpoint 1 - get a random artwork JSON
-    fetch('https://api.artic.edu/api/v1/artworks/600')
-        .then(response => response.json())
+    fetch(`https://api.artic.edu/api/v1/artworks/${artworkId}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error(response.status + ' ' + response.statusText);
+                // If 404, generate a new artwork ID and fetch again
+                if (attempts < maxAttempts) {
+                    const newArtworkId = Math.floor(Math.random() * 10000); // Generate a random ID
+                    return fetchArtwork(newArtworkId, attempts + 1); // Recursively call the function
+                } else {
+                    // If max attempts reached, show a message in the output
+                    document.getElementById('output').textContent = 'Maximum attempts reached. No valid artwork found.';
+                    document.getElementById('artwork-image').style.display = 'none'; // Hide image
+                }
+            } else {
+                return response.json();
             }
-            return response.json();
         })
         .then(data => {
             const title = data.data.title;
@@ -30,4 +39,10 @@ document.getElementById('fetch-button').onclick = () => {
             document.getElementById('output').textContent = error;
             document.getElementById('artwork-image').style.display = 'none'; // Hide image if there's an error
         });
+}
+
+// Trigger fetch for a random artwork ID when the button is clicked
+document.getElementById('fetch-button').onclick = () => {
+    const initialArtworkId = Math.floor(Math.random() * 10000); // Generate a random ID
+    fetchArtwork(initialArtworkId); // Start fetching artwork
 };
