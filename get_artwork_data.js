@@ -4,8 +4,9 @@ document.getElementById('fetch-button').onclick = () => {
         .then(data => {
             const title = data.data.title;
             const artist = data.data.artist_titles ? data.data.artist_titles[0] : 'Unknown Artist';
+            const dateEnd = data.data.date_end;
 
-            document.getElementById('output').textContent = `Title: ${title}\nArtist: ${artist}`;
+            document.getElementById('output').textContent = `Title: ${title}\nArtist: ${artist}\nDate: ${dateEnd}`;
         })
         .catch(error => {
             document.getElementById('output').textContent = 'Error: ' + error;
