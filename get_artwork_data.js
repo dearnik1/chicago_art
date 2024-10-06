@@ -1,7 +1,13 @@
 document.getElementById('fetch-button').onclick = () => {
     // endpoint 1 - get a random artwork JSON
-    fetch('https://api.artic.edu/api/v1/artworks/4')
+    fetch('https://api.artic.edu/api/v1/artworks/600')
         .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(response.status + ' ' + response.statusText);
+            }
+            return response.json();
+        })
         .then(data => {
             const title = data.data.title;
             const artist = data.data.artist_titles ? data.data.artist_titles[0] : 'Unknown Artist';
@@ -21,6 +27,7 @@ document.getElementById('fetch-button').onclick = () => {
             }
         })
         .catch(error => {
-            document.getElementById('output').textContent = 'Error: ' + error;
+            document.getElementById('output').textContent = error;
+            document.getElementById('artwork-image').style.display = 'none'; // Hide image if there's an error
         });
 };
